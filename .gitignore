@@ -1,3 +1,7 @@
 
 *.class
 *.bak
+*.hi
+*.o
+*.exe
+homework05/tempCodeRunnerFile.hs
