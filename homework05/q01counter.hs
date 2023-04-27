@@ -12,10 +12,10 @@ Homework: HW5
 Date: 26 Apr 2023
 
 To compile:
-:load q01counter.hs
+ghc -o q1 q01counter.hs
 
 To run:
-main
+./q1
 -}
 {-
 -- This is the original function

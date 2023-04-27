@@ -17,10 +17,10 @@ Homework: HW5
 Date: 26 Apr 2023
 
 To compile:
-:load q02subseq.hs
+ghc -o q2 q02subseq.hs
 
 To run:
-main
+./q2
 -}
 
 -- This is the main definition of the subseq function.
