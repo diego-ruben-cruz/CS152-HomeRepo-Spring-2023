@@ -5,3 +5,9 @@
 *.o
 *.exe
 homework05/tempCodeRunnerFile.hs
+*.aux
+*.fdb_latexmk
+*.fls
+*.pdf
+*.gz
+RegexRiot/RegexRiot_Project-Report.log
