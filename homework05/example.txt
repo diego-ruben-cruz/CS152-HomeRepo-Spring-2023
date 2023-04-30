@@ -1,0 +1,3 @@
+This is an example text file for testing purposes of q8.
+
+If you see these lines, you have successfully copied the file!
