@@ -9,7 +9,7 @@ SID: 013540384
 Course: CS 152
 Section: 01
 Homework: HW5
-Date: 26 Apr 2023
+Date: 01 May 2023
 
 To compile:
 ghc -o q3 q03mytail.hs
