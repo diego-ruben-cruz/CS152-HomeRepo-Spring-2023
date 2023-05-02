@@ -11,3 +11,5 @@ homework05/tempCodeRunnerFile.hs
 *.pdf
 *.gz
 RegexRiot/RegexRiot_Project-Report.log
+*.png
+*.cls
