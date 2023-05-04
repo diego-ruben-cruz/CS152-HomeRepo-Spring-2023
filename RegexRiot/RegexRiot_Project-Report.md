@@ -31,13 +31,13 @@ const NEW_PHONE_RE = createRegExp(
 );
 ```
 
-With that in mind, RegexRiot is a java library heavily inspired from magic-regexp that contains several objects, at the core of which is a RiotString object. This particular RiotString object is an immutable object that behaves in an append-only fashion. However, modified copies can be made which will be covered in more detail in **Design** and **Implementation**.
+Unfortunately, such a solution does not currently exist, or is otherwise not widely adopted among the Java programming community. With that in mind, RegexRiot is a Java library heavily inspired from `magic-regexp` that contains several objects, at the core of which is a RiotString object. This particular RiotString object is an immutable object that behaves in an append-only fashion. However, modified copies can be made which will be covered in more detail in **Design** and **Implementation**.
 
 ## Design
 
 _This section should focus on the design of your utility library. You could include information on the design patterns and principles you used, the architecture of your library, and any relevant UML diagrams._
 
-The most important features of RegexRiot were specified as follows:
+The most important features of RegexRiot when conducting research and designing the library were specified as follows:
 
 1. Chain of function calls: The library will provide a chain of function calls that will allow developers to construct regular expressions by describing the pattern they want to match. This approach will make it easy for developers to create complex regular expressions without the need for extensive knowledge of the underlying syntax.
 
@@ -47,6 +47,11 @@ The most important features of RegexRiot were specified as follows:
 
 4. Wide range of functionalities: The library will provide a wide range of functionalities for pattern matching, including capturing groups, non-capturing groups, character classes, quantifiers, and more. This will provide developers with a powerful tool for working with text data.
 
+With those aforementioned features taken into account, below are some UML diagrams that depict the overall architecture of RegexRiot.
+
+<!-- Insert Images Here -->
+
+RegexRiot is heavily inspired by the `magix-regexp` library, and as such, follows both the imperative and declarative programming paradigms. RegexRiot follows the imperative programming in that it is based around calling functions to build individual components of the expression, which can then be used to construct an overall group that is a larger chunk of the master expression. With respect to the declarative paradigm, RegexRiot follows in the steps of `magic-regexp` in that it provides a simpler and more readable syntax for the creation and maintenance of regex.
 
 ## Implementation
 
@@ -60,9 +65,18 @@ _Provide instructions on how to use your utility library. This could include cod
 
 _Describe how you tested your utility library. You could include information on any testing frameworks you used, the types of tests you conducted, and the results of your tests._
 
-Testing was largely conducted with the help of a website known as regextutorials, which contain both tutorials and practice exercises on how to make JavaScript Regex, which helps to understand some of the decisions made for the magic-regexp library 
+Testing was largely conducted with the help of a website known as regextutorials [regextutorials.com], which contain both tutorials and practice exercises on how to make JavaScript Regex, which helps to understand some of the decisions made for the magic-regexp library during its implementation.
 
-Below is an example of how RegexRiot would generate the years present. Modifications would have to be made such that the double backslash `\\` would be reduced to a single backslash `\` to be an acceptable regex expression in JavaScript.
+In the following examples, modifications would have to be made such that the double backslash `\\` would be reduced to a single backslash `\` to be an acceptable regex expression in JavaScript when verifying the output on [regextutorials.com].
+
+Below is an example of how RegexRiot would generate a regex expression to match numbers that contain a floating point as per [regextutorials.com](http://regextutorials.com/excercise.html?Floating%20point%20numbers).
+
+```java
+        answer = "\\d+\\.\\d+"; // What RegexRiot would generate
+        ritex = oneOrMore(DIGIT).and(DOT).and(oneOrMore(DIGIT));
+```
+
+Below is an example of how RegexRiot would generate a regex expression to match the titles of all films produced before 1990 as per the regextutorials website [regextutorials.com](http://regextutorials.com/excercise.html?Years%20before%201990).
 
 ```java
 answer = "^.+\\((19[0-8]\\d|\\d{3}|\\d{2}|\\d)\\)"; // What RegexRiot would generate
@@ -82,10 +96,30 @@ ritex = LINE_START.and(oneOrMore(ANY_CHAR))
         .and(CLOSE_BRACKET);
 ```
 
-## Future Work
+Below is an example of how RegexRiot would generate a regex expression to match the 12 and 24 bit colors whose red/green/blue components are equal to each other as per the regextutorials website [regextutorials.com](http://regextutorials.com/excercise.html?Grayscale%20colors).
+
+```java
+        answer = "#((\\d|[A-F]|[a-f]){1,2})\\1{2}";
+        ritex = riot("#")
+                .and(
+                        DIGIT.or(
+                                chars('A').through('F').toRiotString()
+                        ).or(
+                                chars('a').through('f').toRiotString()
+                        )
+                ).times(1, 2)
+                .grouped()
+                .and(group(1))
+                .times(2);
+```
+
+
+## Future Work and Concluding Statements
 
 _Conclude your report with a discussion of potential future work for your utility library. This could include new features, bug fixes, or improvements to existing functionality._
 
 RegexRiot has been released as a `.jar` package that is immediately available on GitHub along with the entirety of the source code which prospective users can download and build on their local machines. 
 
 Future releases may be present in the form of a public Maven repository, or an entirely different approach can be used and perhaps a package manager could be made. However, it remains to be seen whether a package manager would be necessary for a library of such scope.
+
+RegexRiot is an open-source software, and 
