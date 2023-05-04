@@ -15,7 +15,7 @@ _Begin your report by introducing your utility library and providing some backgr
 
 When creating regex expressions, developers will often have a hard time with keeping track of exactly what parts of the regex expression accomplish which tasks. For example, keeping track of number ranges, such as the years 1899 up to 1991, inclusive, can become complicated as the range will include several or-blocks that will then cause the regex expression to fill the line and possibly go on longer than what fits on the screen, or cause a long word wrapping which can bloat the regex. In both cases, if the programmer leaves the code as is, then comes back to it later to modify it for some reason, there is a problem where the developer will likely have to spend time rereading the regex expression to understand it again if the documentation was not put into place at the time.
 
-One solution to make regex building and management easier includes the magic-regexp library which simplifies regex into separate blocks that can break down the expression into separate groups, which one can define as subgroups. Below is an example which demonstrates how a regex for a phone number can be made with magic-regexp.
+One solution to make regex building and management easier includes the `magic-regexp` library which simplifies regex into separate blocks that can break down the expression into separate groups, which one can define as subgroups. `magic-regexp` was made as an alternative to the native JavaScript object `RegExp`. Below is an example which demonstrates how a regex for a phone number can be made with magic-regexp.
 
 ```javascript
 const NEW_PHONE_RE = createRegExp(
@@ -62,10 +62,10 @@ _Describe how you tested your utility library. You could include information on 
 
 Testing was largely conducted with the help of a website known as regextutorials, which contain both tutorials and practice exercises on how to make JavaScript Regex, which helps to understand some of the decisions made for the magic-regexp library 
 
-Below is one example of 
+Below is an example of how RegexRiot would generate the years present. Modifications would have to be made such that the double backslash `\\` would be reduced to a single backslash `\` to be an acceptable regex expression in JavaScript.
 
 ```java
-answer = "^.+\\((19[0-8]\\d|\\d{3}|\\d{2}|\\d)\\)";
+answer = "^.+\\((19[0-8]\\d|\\d{3}|\\d{2}|\\d)\\)"; // What RegexRiot would generate
 ritex = LINE_START.and(oneOrMore(ANY_CHAR))
         .and(OPEN_BRACKET)
         .and(
@@ -86,23 +86,6 @@ ritex = LINE_START.and(oneOrMore(ANY_CHAR))
 
 _Conclude your report with a discussion of potential future work for your utility library. This could include new features, bug fixes, or improvements to existing functionality._
 
-RegexRiot has been released as a `.jar` package that is immediately available on GitHub. Future releases may be present in the form of a Maven project, or a different 
+RegexRiot has been released as a `.jar` package that is immediately available on GitHub along with the entirety of the source code which prospective users can download and build on their local machines. 
 
-
-## From Proposal: Body of Proposed Work
-
-The proposed work involved developing a Java library called RegexRiot, which provides a simple and intuitive way of constructing regular expressions. The library will be designed to be easy to use and will provide a wide range of functionalities for pattern matching. The following are the key features of the library:
-
-The development of the library will involve the following steps:
-
-1. Research: The first step will be to research existing regular expression libraries for Java and Kotlin. This will help us identify the strengths and weaknesses of existing solutions and provide insights into what functionalities are most needed by developers.
-2. Design: Based on our research, we will design the library, including the syntax and chain of function calls. We will also identify the key functionalities that the library will provide.
-3. Implementation: Once we have designed the library, we will implement it in Java and Kotlin. We will use test-driven development to ensure that the library is robust and free of bugs.
-4. Documentation: We will provide comprehensive documentation for the library, including usage examples and a user manual. This will help developers understand how to use the library and make the most of its functionalities.
-5. Release: Once the library is complete, we will release it to the Java and Kotlin communities. We will also promote it on social media and developer forums to ensure that it reaches a wide audience.
-
-## References
-
-1. Oracle. "Java Regular Expressions." Accessed February 27, 2023. https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html.
-2. Kotlin. "Kotlin Regular Expressions." Accessed February 27, 2023. (https://kotlinlang.org/docs/regexp.html)
-3. D. Roe, “RegEXP for JavaScript,” magic-regexp, Jul. 16, 2022. https://regexp.dev/ (accessed Feb. 23, 2023).
+Future releases may be present in the form of a public Maven repository, or an entirely different approach can be used and perhaps a package manager could be made. However, it remains to be seen whether a package manager would be necessary for a library of such scope.
