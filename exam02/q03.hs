@@ -40,7 +40,7 @@ inspire num history = do
 -- Init Prompt function
 initPrompt :: IO Int
 initPrompt = do
-    putStr "Pick a number between 1-5: "
+    putStrLn "Pick a number between 1-5: "
     input <- getLine
     let parsedInput = readMaybe input :: Maybe Int
     case parsedInput of
@@ -52,7 +52,7 @@ initPrompt = do
 -- Follow-up Prompt function
 followPrompt :: [Int] -> IO [Int]
 followPrompt history = do
-    putStr "Would you like another quote? (1-5/n): "
+    putStrLn "Would you like another quote? (1-5/n): "
     input <- getLine
     case input of
         "n" -> do
