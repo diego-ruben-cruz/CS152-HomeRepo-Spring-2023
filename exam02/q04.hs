@@ -28,11 +28,11 @@ rtrim :: (a -> Bool) -> [a] -> [a]
 rtrim pred lst = reverse $ dropWhile pred $ reverse lst
 
 trim :: (a -> Bool) -> [a] -> [a]
-trim pred lst = dropLastWhile pred (dropWhile pred lst)
+trim pred lst = dropPrevWhile pred (dropWhile pred lst)
 
 -- Utility function for trim
-dropLastWhile :: (a -> Bool) -> [a] -> [a]
-dropLastWhile pred lst = reverse (dropWhile pred (reverse lst))
+dropPrevWhile :: (a -> Bool) -> [a] -> [a]
+dropPrevWhile pred lst = reverse (dropWhile pred (reverse lst))
 
 main :: IO ()
 main = do
