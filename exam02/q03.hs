@@ -1,6 +1,7 @@
 {-
 Description:
 Haskell file for Exam 2.
+
 Write a program that allows a user to select a number between 1 and 5 and then prints a famous quote
 (quotes are of your choosing). After printing the quote, the program will ask whether the user would
 like another. If the user enters n, the program ends; otherwise, the user gets another quote. The program
