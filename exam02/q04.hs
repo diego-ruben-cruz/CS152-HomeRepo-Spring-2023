@@ -36,19 +36,19 @@ dropPrevWhile pred lst = reverse (dropWhile pred (reverse lst))
 
 main :: IO ()
 main = do
-    let nums = [1,2,3,4,5]
-    
-    putStrLn "Expected value of ltrim (<3) nums: [3,4,5]"
-    putStr "Actual value of ltrim (<3) nums: "
-    let lnums = ltrim (<3) nums
-    print lnums
+  let nums = [1, 2, 3, 4, 5]
 
-    putStrLn "Expected value of rtrim (>3) nums: [1,2,3]"
-    putStr "Actual value of rtrim (>3) nums: "
-    let rnums = rtrim (>3) nums
-    print rnums
+  putStrLn "Expected value of ltrim (<3) nums: [3,4,5]"
+  putStr "Actual value of ltrim (<3) nums: "
+  let lnums = ltrim (< 3) nums
+  print lnums
 
-    putStrLn "Expected value of trim (/=3) nums: [3]"
-    putStr "Actual value of trim (/=3) nums: "
-    let tnums = trim (/=3) nums
-    print tnums
+  putStrLn "Expected value of rtrim (>3) nums: [1,2,3]"
+  putStr "Actual value of rtrim (>3) nums: "
+  let rnums = rtrim (> 3) nums
+  print rnums
+
+  putStrLn "Expected value of trim (/=3) nums: [3]"
+  putStr "Actual value of trim (/=3) nums: "
+  let tnums = trim (/= 3) nums
+  print tnums

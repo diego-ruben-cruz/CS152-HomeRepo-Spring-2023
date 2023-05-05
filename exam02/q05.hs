@@ -21,17 +21,19 @@ To run:
 
 -- See filter vs map question from hw5
 rotabc :: String -> String
-rotabc = map (\c -> case c of
-                'a' -> 'b'
-                'b' -> 'c'
-                'c' -> 'a'
-                _ -> c)
+rotabc =
+  map
+    ( \c -> case c of
+        'a' -> 'b'
+        'b' -> 'c'
+        'c' -> 'a'
+        _ -> c
+    )
 
 main :: IO ()
 main = do
-
-    let examplestr = "cab"
-    putStrLn "Current value of examplestr: \"cab\""
-    putStrLn "Expected value of rotabc examplestr: \"abc\""
-    putStr "Actual value of rotabc examplestr: "
-    print (rotabc examplestr)
+  let examplestr = "cab"
+  putStrLn "Current value of examplestr: \"cab\""
+  putStrLn "Expected value of rotabc examplestr: \"abc\""
+  putStr "Actual value of rotabc examplestr: "
+  print (rotabc examplestr)
