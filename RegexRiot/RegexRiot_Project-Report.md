@@ -19,15 +19,16 @@ One solution to make regex building and management easier includes the `magic-re
 
 ```javascript
 const NEW_PHONE_RE = createRegExp(
-  (exactly('+')
+  exactly("+")
     .optionally()
-    .and('1')
-    .as('country')
+    .and("1")
+    .as("country")
     .optionally()
-    .and(charIn(' -').optionally())
-    .and((charIn('123456789').and(digit.times(3))).as('area'))
-    .and((charIn('123456789').and(digit.times(6))).as('rest'))
-    ).at.lineEnd().at.lineStart()
+    .and(charIn(" -").optionally())
+    .and(charIn("123456789").and(digit.times(3)).as("area"))
+    .and(charIn("123456789").and(digit.times(6)).as("rest"))
+    .at.lineEnd()
+    .at.lineStart()
 );
 ```
 
@@ -56,6 +57,50 @@ RegexRiot is heavily inspired by the `magix-regexp` library, and as such, follow
 ## Implementation
 
 _In this section, describe how you implemented your utility library in Java. You could discuss any notable coding decisions you made, how you organized your code, and any interesting algorithms or data structures you used._
+
+The implementation of RegexRiot heavily depends on the usage of tokens to denote specific primitives such as characters, integers, floats, etc. This was an important coding decision in the context of the
+
+In the following example code, two classes which outlines the tokens that can be used in conjunction with the RiotString.
+
+```java
+public class RiotTokens {
+    public static final RiotString DIGIT = riot("\\d", true),
+            DOT = riot("\\.", true),
+            ANY_CHAR = riot(".", true),
+            WORD_CHAR = riot("\\w", true),
+            OPEN_BRACKET = riot("\\(", true),
+            CLOSE_BRACKET = riot("\\)", true),
+            LINE_START = riot("^", false),
+            Line_END = riot("$", false),
+            EMPTY = riot(emptyBasicRiotString());
+}
+
+class SimpleRiotTokens {
+    public static SimpleRiotString DIGIT() {
+        return new BasicRiotString("\\d", true);
+    }
+
+    public static SimpleRiotString DOT() {
+        return new BasicRiotString("\\.", true);
+    }
+
+    public static SimpleRiotString ANY_CHAR() {
+        return new BasicRiotString(".", true);
+    }
+
+    public static SimpleRiotString WORD_CHAR() {
+        return new BasicRiotString("\\w", true);
+    }
+
+    public static SimpleRiotString QUESTION_CHAR() {
+        return new BasicRiotString("\\?", true);
+    }
+
+    public static SimpleRiotString EMPTY() {
+        return emptyBasicRiotString();
+    }
+}
+```
 
 ## Usage
 
@@ -113,13 +158,12 @@ Below is an example of how RegexRiot would generate a regex expression to match 
                 .times(2);
 ```
 
-
 ## Future Work and Concluding Statements
 
 _Conclude your report with a discussion of potential future work for your utility library. This could include new features, bug fixes, or improvements to existing functionality._
 
-RegexRiot has been released as a `.jar` package that is immediately available on GitHub along with the entirety of the source code which prospective users can download and build on their local machines. 
+RegexRiot has been released as a `.jar` package that is immediately available on GitHub along with the entirety of the source code which prospective users can download and build on their local machines.
 
 Future releases may be present in the form of a public Maven repository, or an entirely different approach can be used and perhaps a package manager could be made. However, it remains to be seen whether a package manager would be necessary for a library of such scope.
 
-RegexRiot is an open-source software, and 
+RegexRiot is an open-source software, and as such, we invite others to build it from source, and contribute to improve upon it.
