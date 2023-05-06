@@ -58,7 +58,7 @@ RegexRiot is heavily inspired by the `magix-regexp` library, and as such, follow
 
 _In this section, describe how you implemented your utility library in Java. You could discuss any notable coding decisions you made, how you organized your code, and any interesting algorithms or data structures you used._
 
-The implementation of RegexRiot heavily depends on the usage of tokens to denote specific primitives such as characters, integers, floats, etc. This was an important coding decision in the context of the
+The implementation of RegexRiot heavily depends on the usage of tokens to denote specific primitives such as characters, integers, floats, etc. This was an important coding decision in the context of the project because it allowed for the simplification of regex expressions while also reducing the need for multiple comments. With the use of tokens, it is possible to understand individual blocks of the regex expression, where the programmer would likely only need to comment on subgroups and the whole overall group to clarify what 'chunks' accomplish what tasks in parsing.
 
 In the following example code, two classes which outlines the tokens that can be used in conjunction with the RiotString.
 
@@ -102,6 +102,119 @@ class SimpleRiotTokens {
 }
 ```
 
+A similar approach was used in definition of frequency of a certain group, where the number of expected instances was simplified from using symbols, to lexical modifier names. This is shown in the interface below:
+
+```java
+/**
+ * An interface to determine different amounts of instances that a certain
+ * sub-expression can have within an overall regex instance.
+ */
+public interface RiotQuantifiers {
+    /**
+     * A method to make a regex subexpression entirely optional, where it is present
+     * 0-1 times when parsing.
+     *
+     * @param ritex The regex expression which will be modified
+     * @return The newly edited regex expression
+     */
+    static RiotString oneOrNone(RiotString ritex) {
+        return ritex.wholeThingOptional();
+    }
+
+    /**
+     * A method to make a new regex subexpression from a String base, marked as
+     * optional such that it is present 0-1 times when parsing.
+     *
+     * @param expression The string with which to make optional using regex
+     *                   conventions
+     * @return The newly created regex expression
+     */
+    static RiotString oneOrNone(String expression) {
+        return oneOrNone(riot(expression));
+    }
+
+    /**
+     * A method to make a regex subexpression able to match zero or more times when
+     * parsing.
+     *
+     * @param ritex The regex subexpression to be modified
+     * @return The newly edited regex expression
+     */
+    static RiotString zeroOrMore(RiotString ritex) {
+        if (ritex.isNotUnitChain())
+            ritex = ritex.wholeThingGrouped();
+        return ritex.and("*");
+    }
+
+    /**
+     * A method to make a new regex subexpression from a String base, where it is
+     * able to match zero or more times when parsing.
+     *
+     * @param expression The string with which to make optional using regex
+     *                   conventions
+     * @return The newly created regex expression
+     */
+    static RiotString zeroOrMore(String expression) {
+        return zeroOrMore(riot(expression));
+    }
+
+    /**
+     * A method to make a regex subexpression able to match at least once when
+     * parsing.
+     *
+     * @param ritex The regex subexpression to be modified
+     * @return The newly edited regex expression
+     */
+    static RiotString oneOrMore(RiotString ritex) {
+        if (ritex.isNotUnitChain())
+            ritex = ritex.wholeThingGrouped();
+        return ritex.and("+");
+    }
+
+    /**
+     * A method to make a new regex subexpression from a String base, where it is
+     * able to match at least once when parsing.
+     *
+     * @param expression The String with which to make a regex qualifier
+     * @return The newly created regex expression
+     */
+    static RiotString oneOrMore(String expression) {
+        return oneOrMore(riot(expression));
+    }
+
+}
+```
+
+For the sake of simplicity, the above code block shows one approach to how RegexRiot can build expressions, but it is also possible for RiotStrings to take Strings as input, that may have been previously built by other RiotStrings, and build upon them to create a larger regex expression.
+
+When defining ranges, RegexRiot has a native way of handling those by way of defining them as overall 'collections' shown here:
+
+```java
+class SimpleRiotCollections {
+    public static SimpleRiotString charIn(String chars) {
+        return new BasicRiotString("[" + chars + "]");
+    }
+
+    public static RiotRange chars(char inclusiveStartChar) {
+        return new RiotRange(inclusiveStartChar);
+    }
+
+    public static class RiotRange {
+        private char startChar;
+
+        RiotRange(char inclusiveStartChar) {
+            startChar = inclusiveStartChar;
+        }
+
+        public SimpleRiotString through(char inclusiveEndChar) {
+            return new BasicRiotString("[" + startChar + "-" + inclusiveEndChar + "]");
+        }
+    }
+}
+```
+
+Those are the core components of the inner workings of RegexRiot, with additional functions covered to account for taking in a String as input as opposed to objects defined by RegexRiot.
+
 ## Usage
 
 _Provide instructions on how to use your utility library. This could include code examples and explanations of the library's API._
@@ -110,9 +223,9 @@ _Provide instructions on how to use your utility library. This could include cod
 
 _Describe how you tested your utility library. You could include information on any testing frameworks you used, the types of tests you conducted, and the results of your tests._
 
-Testing was largely conducted with the help of a website known as regextutorials [regextutorials.com], which contain both tutorials and practice exercises on how to make JavaScript Regex, which helps to understand some of the decisions made for the magic-regexp library during its implementation.
+Testing was largely conducted with the help of a website known as [regextutorials](https://regextutorials.com), which contain both tutorials and practice exercises on how to make JavaScript Regex, which helps to understand some of the decisions made for the magic-regexp library during its implementation.
 
-In the following examples, modifications would have to be made such that the double backslash `\\` would be reduced to a single backslash `\` to be an acceptable regex expression in JavaScript when verifying the output on [regextutorials.com].
+In the following examples, modifications would have to be made such that the double backslash `\\` would be reduced to a single backslash `\` to be an acceptable regex expression in JavaScript when verifying the output on [regextutorials](https://regextutorials.com).
 
 Below is an example of how RegexRiot would generate a regex expression to match numbers that contain a floating point as per [regextutorials.com](http://regextutorials.com/excercise.html?Floating%20point%20numbers).
 
@@ -162,8 +275,8 @@ Below is an example of how RegexRiot would generate a regex expression to match 
 
 _Conclude your report with a discussion of potential future work for your utility library. This could include new features, bug fixes, or improvements to existing functionality._
 
-RegexRiot has been released as a `.jar` package that is immediately available on GitHub along with the entirety of the source code which prospective users can download and build on their local machines.
+RegexRiot has been released as a `.jar` package that is immediately available on GitHub along with the entirety of the source code which prospective users can download and build on their local machines. It is clear that this library remains in infancy, because testing was modeled on a small sample size from [regextutorials](https://regextutorials.com) where the intention was to teach regex well enough to know the basics, but not enough to be able to comprehensively teach users how to cover particular edge cases. In a few of the exercises, the regex generated by us may contain test escapes that were not accounted for by [regextutorials](https://regextutorials.com).
 
 Future releases may be present in the form of a public Maven repository, or an entirely different approach can be used and perhaps a package manager could be made. However, it remains to be seen whether a package manager would be necessary for a library of such scope.
 
-RegexRiot is an open-source software, and as such, we invite others to build it from source, and contribute to improve upon it.
+RegexRiot is an open-source software, and as such, we invite others to build it from source, and contribute to improve upon it. The documentation for the software is present in the form of javadoc, but perhaps there is an opportunity to make a presentable documentation in a `readme.md` right from the repository page in GitHub.
