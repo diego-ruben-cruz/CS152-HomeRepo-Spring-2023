@@ -213,11 +213,91 @@ class SimpleRiotCollections {
 }
 ```
 
-Those are the core components of the inner workings of RegexRiot, with additional functions covered to account for taking in a String as input as opposed to objects defined by RegexRiot.
+Those are the core components of the inner workings of RegexRiot, with additional functions covered to account for taking in a String as input as opposed to objects defined by RegexRiot. Further details on how to use the library will be outlined in the **Usage** section of the report.
 
 ## Usage
 
 _Provide instructions on how to use your utility library. This could include code examples and explanations of the library's API._
+
+RegexRiot is a library that is designed to be able to branch out regex into subgroups and be able to mark them with a certain alias such that they can be identified upon first reading through the code. Then, additional comments made can clarify upon larger subgroups as to how they contribute to
+
+Let's walk through an example of parsing an input for one name, or another name in the context of a riotString. Suppose we were searching to match either `Bugs Bunny` or `DaffyDaffy` in the input. The first thing we would do is create a RiotString through calling `riot(String seed)` as shown below:
+
+```java
+ritex = riot("Bugs")
+```
+
+But we are not finished yet, so we do not immediately use the `;` character. We want to include the `" Bunny"` portion of the string, so we shall append `.and(String extension)` like so:
+
+```java
+ritex = riot("Bugs").and(" Bunny")
+```
+
+To assign an alias to `Bugs Bunny`, we shall use `.as(String name)` to mark it with the tag `name01` like so:
+
+```java
+ritex = riot("Bugs").and(" Bunny").as("name01")
+```
+
+Now that we have made the first name, we must make use of the `.or(RiotString extension)` to begin making the `DaffyDaffy` portion of the regex, like so:
+
+```java
+ritex = riot("Bugs").and(" Bunny").as("name01")
+    .or(riot("Daffy"))
+```
+
+Note that a new `riot()` expression was enclosed, which allows a similar technique to be used as was the case with `Bugs Bunny`. The main difference in creating this sub-instance of a RiotString is that we must use the `.times(int repeatCount)` method to defined that `Daffy` will occur twice, like so:
+
+```java
+ritex = riot("Bugs").and(" Bunny").as("name01")
+    .or(riot("Daffy").times(2))
+```
+
+We will finish this regex by assigning the name `name02` to the regex associated with `DaffyDaffy`.
+
+```java
+ritex = riot("Bugs").and(" Bunny").as("name01")
+    .or(riot("Daffy").times(2).as("name02"));
+```
+
+The final expression will appear as shown above, but playing around with the formatting of the expression as shown below can allow for comments to surround enclosing blocks of `.or()` or `.and()` to allow for greater clarification when building more complicated regex.
+
+```java
+ritex = riot("Bugs").and(" Bunny").as("name01")
+    .or(
+        riot("Daffy").times(2).as("name02")
+    );
+resultingRegex = "(?<name01>Bugs Bunny)|(?<name02>(Daffy){2})";
+```
+
+Let us make a more complicated expression where it should match 24-bit hexadecimal grayscale colors such as `#000000`, `#a9a9a9`, `#848484` as well as 12-bit hexadecimal grayscale colors such as `#FFF` and `#000`.
+
+Making the base, we should have the symbol `#` appear on ALL instances of the color, like so:
+
+```java
+ritex = riot("#")
+```
+
+From there, we need to make use of `.and(RiotString extension)`, `.or(RiotString extension)`, as well as the `.times(int repeatCount)` or `.times(int atLeast, int atMost)`. The resulting expression will result in the following expression:
+
+```java
+ritex = riot("#").and(
+        DIGIT.or(chars('A').through('F').toRiotString())
+        .or(chars('a').through('f').toRiotString())
+    ).times(1, 2)
+```
+
+In the above code, `DIGIT` is a previously defined token as explained in the **Implemenation** section of the report, and `chars(char inclusiveStartChar).through(char inclusiveEndChar)` is a utility range method that was also previously defined. However, this does not immediately account for the fact that following the hexadecimal declaration denoted by `#`, there can be either three characters or six characters, so we can define the previous code block as a group, and have it possibly repeat twice like so:
+
+```java
+ritex = riot("#").and(
+        DIGIT.or(chars('A').through('F').toRiotString())
+        .or(chars('a').through('f').toRiotString())
+    ).times(1, 2).grouped().and(group(1)).times(2);
+resultingRegex = "#((\\d|[A-F]|[a-f]){1,2})\\1{2}";
+```
+
+This provides a basic outline for the functionality of RegexRiot as it had been designed. What's left is to discuss the types of testing that had been done, and make a few comments on the current state of the library as it is initially distributed nearing the end of May 2023.
 
 ## Testing
 
