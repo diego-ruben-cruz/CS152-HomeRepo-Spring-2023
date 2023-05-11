@@ -92,12 +92,12 @@ In both cases, if the programmer leaves the code as is, then comes back to it la
 there is a problem where the developer will likely have to spend time rereading the regex expression to understand
 it again if the documentation was not put into place at the time.
 
-One solution to make regex building and management easier includes the 	exttt{magic-regexp} library
+One solution to make regex building and management easier includes the \texttt{magic-regexp} library
 which simplifies regex into separate blocks that can break down the expression into separate
-groups, which one can define as subgroups.
+groups, which one can define as subgroups.\cite{magic-regexp}
 \texttt{magic-regexp} was made as an alternative to the native JavaScript object \texttt{RegExp}.
 \textbf{Figure 1} is an example which demonstrates how a regex for a phone number can be made with
-magic-regexp.
+\texttt{magic-regexp}. \cite{omereshone2023}
 
 \vfill\eject
 
@@ -105,27 +105,28 @@ magic-regexp.
     \centering
     \label{fig:magic-regexp-phonenum-regex}
     \begin{lstlisting}[language=JavaScript]
-const NEW_PHONE_RE = createRegExp(
-    exactly("+")
-    .optionally()
-    .and("1")
-    .as("country")
-    .optionally()
-    .and(charIn(" -").optionally())
-    .and(charIn("123456789")
-    .and(digit.times(3)).as("area"))
-    .and(charIn("123456789")
-    .and(digit.times(6)).as("rest"))
-    .at.lineEnd()
-    .at.lineStart()
-        );
-    \end{lstlisting}
+    const NEW_PHONE_RE = createRegExp(
+        exactly("+")
+        .optionally()
+        .and("1")
+        .as("country")
+        .optionally()
+        .and(charIn(" -").optionally())
+        .and(charIn("123456789")
+        .and(digit.times(3)).as("area"))
+        .and(charIn("123456789")
+        .and(digit.times(6)).as("rest"))
+        .at.lineEnd()
+        .at.lineStart()
+            );
+        \end{lstlisting}
     \caption{\texttt{magic-regexp} Phone Number Regex}
 \end{figure}
 
 \section{Design}
 
-The most important features of RegexRiot when conducting research and designing the library were specified as follows:
+The most important features of RegexRiot when conducting research and
+designing the library were specified as follows:
 
 \begin{enumerate}
     \item \textbf{Chain of function calls:}\\
@@ -140,9 +141,9 @@ The most important features of RegexRiot when conducting research and designing 
           to read and will provide a clear description of the pattern to match.
 
     \item \textbf{Support for Java and Kotlin:}\\
-          The library will be developed for Java developers.
+          The library will be developed for Java and Kotlin developers. \cite{oracledocs93}
           This will provide a solution for developers working with these languages who are
-          looking for an easy-to-use regular expression library.
+          looking for an easy-to-use regular expression library.\cite{kotlindocs23}
 
           \vfill\eject
 
@@ -153,26 +154,17 @@ The most important features of RegexRiot when conducting research and designing 
 \end{enumerate}
 
 With those aforementioned features taken into account,
-below are some UML diagrams that depict the overall architecture of RegexRiot.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.8\linewidth]{RegexRiot_Class_Diagram.png}
-    \caption{Incomplete Class Diagram}
-    \label{fig:classdiagram}
-\end{figure}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.8\linewidth]{RegexRiot_Object_Diagram.png}
-    \caption{Object Diagram}
-    \label{fig:objdiagram}
-\end{figure}
+some UML diagrams have been provided in the \textbf{Appendices} of the
+document.
 
 RegexRiot is heavily inspired by the \texttt{magix-regexp} library, and as such,
-follows both the imperative and declarative programming paradigms.
+follows both the imperative and declarative programming paradigms. \cite{magic-regexp}
 RegexRiot follows the imperative programming in that it is based around calling functions
-to build individual components of the expression, which can then be used to construct an overall group that is a larger chunk of the master expression. With respect to the declarative paradigm, RegexRiot follows in the steps of 	exttt{magic-regexp} in that it provides a simpler and more readable syntax for the creation and maintenance of regex.
+to build individual components of the expression, which can then be used to construct an
+overall group that is a larger chunk of the master expression. With respect to the
+declarative paradigm, RegexRiot follows in the steps of \texttt{magic-regexp}
+in that it provides a simpler and more readable syntax for the creation and
+maintenance of regex.
 
 \section{Implementation}
 The implementation of RegexRiot heavily depends on the usage of tokens to denote specific
@@ -182,7 +174,7 @@ while also reducing the need for multiple comments. With the use of tokens, it i
 understand individual blocks of the regex expression, where the programmer would likely only
 need to comment on subgroups and the whole overall group to clarify what 'chunks' accomplish
 what tasks in parsing.
-\\
+
 In the following example code, RiotTokens is an interface that outlines the tokens that can
 be used in conjunction with the RiotString.
 
@@ -240,10 +232,10 @@ public interface RiotTokens {
 
 \vfill\eject
 
-A similar approach was used in definition of frequency of a certain group,
+A similar approach was used in definining the frequency of a certain group,
 where the number of expected instances was simplified from using symbols,
-to lexical modifier names. This is shown in \textbf{Figure 5} 
-(note that this is an incomplete class, for the sake of saving space 
+to lexical modifier names. This is shown in \textbf{Figure~ \ref{fig:regexriot-quantifiers}}
+(note that this is an incomplete class, for the sake of saving space
 on the paper).
 
 \begin{figure}[htbp]
@@ -272,13 +264,12 @@ public class RiotQuantifiers {
     \caption{\texttt{RegexRiot} Incomplete RiotQuantifiers Class}
 \end{figure}
 
-For the sake of simplicity, the above code block shows one approach to how 
-RegexRiot can build expressions, but it is also possible for RiotStrings 
-to take Strings as input, that may have been previously built by other 
+For the sake of simplicity, the above code block shows one approach to how
+RegexRiot can build expressions, but it is also possible for RiotStrings
+to take Strings as input, that may have been previously built by other
 RiotStrings, and build upon them to create a larger regex expression.
-
-When defining ranges, RegexRiot has a native way of handling those by way 
-of defining them as overall 'sets' as shown in \textbf{Figure 6}.
+When defining ranges, RegexRiot has a native way of handling those by way
+of defining them as overall 'sets' as shown in \textbf{Figure \ref{fig:regexriot-riotset}}.
 
 \begin{figure}[htbp]
     \centering
@@ -319,13 +310,13 @@ extends RiotString.RiotStringable {
     \caption{\texttt{RegexRiot} RiotSet Class}
 \end{figure}
 
-Those are the core components of the inner workings of RegexRiot, 
-with additional functions covered to account for taking in a String 
-as input as opposed to objects defined by RegexRiot. 
-Further details on how to use the library will be outlined in 
+Those are the core components of the inner workings of RegexRiot,
+with additional functions covered to account for taking in a String
+as input as opposed to objects defined by RegexRiot.
+Further details on how to use the library will be outlined in
 the \textbf{Usage} section of the report.
 
-\subsection{Usage}\label{AA}
+\subsection{Usage}
 Define abbreviations and acronyms the first time they are used in the text,
 even after they have been defined in the abstract. Abbreviations such as
 IEEE, SI, MKS, CGS, ac, dc, and rms do not have to be defined. Do not use
@@ -339,49 +330,47 @@ an ``e'' after the ``g''. Avoid the stilted expression ``one of us (R. B.
 G.) thanks $\ldots$''. Instead, try ``R. B. G. thanks$\ldots$''. Put sponsor
 acknowledgments in the unnumbered footnote on the first page.
 
+\vfill\eject
+
 \section{Future Work and Concluding Statements}
 
-RegexRiot has been released as a `.jar` package that is immediately available 
-on GitHub along with the entirety of the source code which prospective users 
-can download and build on their local machines. It is clear that this library 
-remains in infancy, because testing was modeled on a small sample size from 
-\url{https://www.regextutorials.com} where the intention was to 
-teach regex well enough to know the basics, but not enough to be able to 
-comprehensively teach users how to cover particular edge cases. 
-In a few of the exercises, the regex generated by us may contain test escapes 
+RegexRiot has been released as a `.jar` package that is immediately available
+on GitHub along with the entirety of the source code which prospective users
+can download and build on their local machines. It is clear that this library
+remains in infancy, because testing was modeled on a small sample size from
+\url{https://www.regextutorials.com} where the intention was to
+teach regex well enough to know the basics, but not enough to be able to
+comprehensively teach users how to cover particular edge cases.
+In a few of the exercises, the regex generated by us may contain test escapes
 that were not accounted for by \url{https://www.regextutorials.com}.
-\\
-Future releases may be present in the form of a public Maven repository, 
-or an entirely different approach can be used and perhaps a package manager 
-could be made. However, it remains to be seen whether a package manager would 
+
+Future releases may be present in the form of a public Maven repository,
+or an entirely different approach can be used and perhaps a package manager
+could be made. However, it remains to be seen whether a package manager would
 be necessary for a library of such scope.
-\\
-RegexRiot is an open-source software, and as such, we invite others to use the library 
-in their programming, and contribute to improve upon it. The documentation for 
-the software is present in the form of javadoc, but perhaps there is an 
-opportunity to make a presentable documentation in a \texttt{readme.md} 
+
+RegexRiot is an open-source software, and as such, we invite others to use the library
+in their programming, and contribute to improve upon it. The documentation for
+the software is present in the form of javadoc, but perhaps there is an
+opportunity to make a presentable documentation in a \texttt{readme.md}
 right from the repository page in GitHub.
 
 GitHub link to repository: \url{https://github.com/RK22000/RegexRiot}
 
-\section*{References}
-
-\begin{thebibliography}{00}
-    \bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-    \bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
-    \bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
-    \bibitem{b4} K. Elissa, ``Title of paper if known,'' unpublished.
-    \bibitem{b5} R. Nicole, ``Title of paper with only first word capitalized,'' J. Name Stand. Abbrev., in press.
-    \bibitem{b6} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ``Electron spectroscopy studies on magneto-optical media and plastic substrate interface,'' IEEE Transl. J. Magn. Japan, vol. 2, pp. 740--741, August 1987 [Digests 9th Annual Conf. Magnetics Japan, p. 301, 1982].
-    \bibitem{b7} M. Young, The Technical Writer's Handbook. Mill Valley, CA: University Science, 1989.
-\end{thebibliography}
+\bibliographystyle{IEEEtran}
+\bibliography{RegexRiot-Refs.bib}
 
 \onecolumn
 % start of the appendix section, with one column
 \appendices
-\section{Appendix A}
-ayy lmao
-\subsection{Subsection A.1}
-% more appendix sections and subsections here
+\section*{Appendix A - Incomplete Class Diagram}
+\centering
+\includegraphics[width=\linewidth]{RegexRiot_Class_Diagram.png}
+\label{appendix:classdiagram}
+
+\section*{Appendix B - Object Diagram}
+\centering
+\includegraphics[width=\linewidth]{RegexRiot_Object_Diagram.png}
+\label{appendix:objdiagram}
 
 \end{document}
