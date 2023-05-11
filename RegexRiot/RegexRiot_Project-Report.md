@@ -50,7 +50,9 @@ The most important features of RegexRiot when conducting research and designing 
 
 With those aforementioned features taken into account, below are some UML diagrams that depict the overall architecture of RegexRiot.
 
-<!-- Insert Images Here -->
+![Class Diagram](/images/RegexRiot_Class_Diagram.png "Class Diagram")
+
+![Object Diagram](/images/RegexRiot_Object_Diagram.png "Object Diagram")
 
 RegexRiot is heavily inspired by the `magix-regexp` library, and as such, follows both the imperative and declarative programming paradigms. RegexRiot follows the imperative programming in that it is based around calling functions to build individual components of the expression, which can then be used to construct an overall group that is a larger chunk of the master expression. With respect to the declarative paradigm, RegexRiot follows in the steps of `magic-regexp` in that it provides a simpler and more readable syntax for the creation and maintenance of regex.
 
@@ -60,45 +62,40 @@ _In this section, describe how you implemented your utility library in Java. You
 
 The implementation of RegexRiot heavily depends on the usage of tokens to denote specific primitives such as characters, integers, floats, etc. This was an important coding decision in the context of the project because it allowed for the simplification of regex expressions while also reducing the need for multiple comments. With the use of tokens, it is possible to understand individual blocks of the regex expression, where the programmer would likely only need to comment on subgroups and the whole overall group to clarify what 'chunks' accomplish what tasks in parsing.
 
-In the following example code, two classes which outlines the tokens that can be used in conjunction with the RiotString.
+In the following example code, RiotTokens is an interface that outlines the tokens that can be used in conjunction with the RiotString.
 
 ```java
-public class RiotTokens {
-    public static final RiotString DIGIT = riot("\\d", true),
-            DOT = riot("\\.", true),
-            ANY_CHAR = riot(".", true),
-            WORD_CHAR = riot("\\w", true),
-            OPEN_BRACKET = riot("\\(", true),
-            CLOSE_BRACKET = riot("\\)", true),
-            LINE_START = riot("^", false),
-            Line_END = riot("$", false),
-            EMPTY = riot(emptyBasicRiotString());
-}
+public interface RiotTokens {
+    /**
+     * This should be safe to use as argument to use as Argument to RiotSet.chars()
+     */
+    RiotString DIGIT = newLazyRiot("\\d", true),
+                    DOT = newLazyRiot("\\.", true),
+                    WORD_CHAR = newLazyRiot("\\w", true),
+                    OPEN_BRACE = newLazyRiot("\\(", true),
+                    CLOSE_BRACE = newLazyRiot("\\)", true),
+                    OPEN_SQ_BRACE = newLazyRiot("\\[", true),
+                    CLOSE_SQ_BRACE = newLazyRiot("\\]", true),
+                    QUESTION_MARK = newLazyRiot("\\?", true),
+                    BOUNDARY = newLazyRiot("\\b", true),
+                    SPACE = newLazyRiot("\\s", true),
+                    SPACES = oneOrMore(SPACE),
+                    PLUS = newLazyRiot("\\+", true);
+    /**
+     * This is not safe to use as arguments to RiotSet.chars()
+     */
+    RiotString ANY_CHAR = newLazyRiot("."),
+                    LINE_START = newLazyRiot("^", true),
+                    Line_END = newLazyRiot("$", true);
+    RiotSet HEX = inSetOf(DIGIT)
+                    .andChars('a').through('f')
+                    .andChars('A').through('F'),
+                    HEX_LOWER = inSetOf(DIGIT)
+                                    .andChars('a').through('f'),
+                    HEX_UPPER = inSetOf(DIGIT)
+                                    .andChars('A').through('F');
+    int UNLIMITED = -1;
 
-class SimpleRiotTokens {
-    public static SimpleRiotString DIGIT() {
-        return new BasicRiotString("\\d", true);
-    }
-
-    public static SimpleRiotString DOT() {
-        return new BasicRiotString("\\.", true);
-    }
-
-    public static SimpleRiotString ANY_CHAR() {
-        return new BasicRiotString(".", true);
-    }
-
-    public static SimpleRiotString WORD_CHAR() {
-        return new BasicRiotString("\\w", true);
-    }
-
-    public static SimpleRiotString QUESTION_CHAR() {
-        return new BasicRiotString("\\?", true);
-    }
-
-    public static SimpleRiotString EMPTY() {
-        return emptyBasicRiotString();
-    }
 }
 ```
 
@@ -109,106 +106,69 @@ A similar approach was used in definition of frequency of a certain group, where
  * An interface to determine different amounts of instances that a certain
  * sub-expression can have within an overall regex instance.
  */
-public interface RiotQuantifiers {
-    /**
-     * A method to make a regex subexpression entirely optional, where it is present
-     * 0-1 times when parsing.
-     *
-     * @param ritex The regex expression which will be modified
-     * @return The newly edited regex expression
-     */
-    static RiotString oneOrNone(RiotString ritex) {
+public class RiotQuantifiers {
+    public static RiotString oneOrNone(RiotString ritex) {
         return ritex.wholeThingOptional();
     }
 
-    /**
-     * A method to make a new regex subexpression from a String base, marked as
-     * optional such that it is present 0-1 times when parsing.
-     *
-     * @param expression The string with which to make optional using regex
-     *                   conventions
-     * @return The newly created regex expression
-     */
-    static RiotString oneOrNone(String expression) {
-        return oneOrNone(riot(expression));
+    public static <T extends RiotString.RiotStringable> RiotString oneOrNone(T expression) {
+        return oneOrNone(expression.toRiotString());
     }
 
-    /**
-     * A method to make a regex subexpression able to match zero or more times when
-     * parsing.
-     *
-     * @param ritex The regex subexpression to be modified
-     * @return The newly edited regex expression
-     */
-    static RiotString zeroOrMore(RiotString ritex) {
-        if (ritex.isNotUnitChain())
-            ritex = ritex.wholeThingGrouped();
-        return ritex.and("*");
+    public static <T> RiotString oneOrNone(T expression) {
+        return oneOrNone(lazyRiot(expression.toString()));
     }
 
-    /**
-     * A method to make a new regex subexpression from a String base, where it is
-     * able to match zero or more times when parsing.
-     *
-     * @param expression The string with which to make optional using regex
-     *                   conventions
-     * @return The newly created regex expression
-     */
-    static RiotString zeroOrMore(String expression) {
-        return zeroOrMore(riot(expression));
+    public static RiotString zeroOrMore(RiotString ritex) {
+        return ritex.wholeZeroOrMoreTimes();
     }
 
-    /**
-     * A method to make a regex subexpression able to match at least once when
-     * parsing.
-     *
-     * @param ritex The regex subexpression to be modified
-     * @return The newly edited regex expression
-     */
-    static RiotString oneOrMore(RiotString ritex) {
-        if (ritex.isNotUnitChain())
-            ritex = ritex.wholeThingGrouped();
-        return ritex.and("+");
+    public static <T extends RiotString.RiotStringable> RiotString zeroOrMore(T expression) {
+        return zeroOrMore(expression.toRiotString());
     }
 
-    /**
-     * A method to make a new regex subexpression from a String base, where it is
-     * able to match at least once when parsing.
-     *
-     * @param expression The String with which to make a regex qualifier
-     * @return The newly created regex expression
-     */
-    static RiotString oneOrMore(String expression) {
-        return oneOrMore(riot(expression));
+    public static <T> RiotString zeroOrMore(T expression) {
+        return zeroOrMore(lazyRiot(expression.toString()));
     }
 
+    public static RiotString oneOrMore(RiotString ritex) {
+        return ritex.wholeOnceOrMoreTimes();
+    }
+
+    public static <T extends RiotString.RiotStringable> RiotString oneOrMore(T expression) {
+        return oneOrMore(expression.toRiotString());
+    }
+
+    public static <T> RiotString oneOrMore(T expression) {
+        return oneOrMore(lazyRiot(expression.toString()));
+    }
 }
 ```
 
 For the sake of simplicity, the above code block shows one approach to how RegexRiot can build expressions, but it is also possible for RiotStrings to take Strings as input, that may have been previously built by other RiotStrings, and build upon them to create a larger regex expression.
 
-When defining ranges, RegexRiot has a native way of handling those by way of defining them as overall 'collections' shown here:
+When defining ranges, RegexRiot has a native way of handling those by way of defining them as overall 'sets' shown here:
 
 ```java
-class SimpleRiotCollections {
-    public static SimpleRiotString charIn(String chars) {
-        return new BasicRiotString("[" + chars + "]");
+public interface RiotSet extends RiotString.RiotStringable {
+    static <T>RiotSet inSetOf(T seed) {
+        return RiotSetImplementations.lazyInclusiveSetOf(seed.toString());
     }
-
-    public static RiotRange chars(char inclusiveStartChar) {
-        return new RiotRange(inclusiveStartChar);
+    static <T>RiotSet outSetOf(T seed) {
+        return RiotSetImplementations.lazyExclusiveSetOf(seed.toString());
     }
-
-    public static class RiotRange {
-        private char startChar;
-
-        RiotRange(char inclusiveStartChar) {
-            startChar = inclusiveStartChar;
-        }
-
-        public SimpleRiotString through(char inclusiveEndChar) {
-            return new BasicRiotString("[" + startChar + "-" + inclusiveEndChar + "]");
-        }
+    <T>RiotSet and(T extension);
+    @FunctionalInterface
+    interface RiotSetRange {
+        RiotSet through(char endCharInclusive);
+    }
+    RiotSetRange andChars(char startCharInclusive);
+    RiotSet complement();
+    default RiotString toRiotString() {
+        return newLazyRiot(toString(), true);
+    }
+    default RiotString andThen(RiotString expression) {
+        return toRiotString().then(expression);
     }
 }
 ```
@@ -318,12 +278,12 @@ Below is an example of how RegexRiot would generate a regex expression to match 
 
 ```java
 answer = "^.+\\((19[0-8]\\d|\\d{3}|\\d{2}|\\d)\\)"; // What RegexRiot would generate
-ritex = LINE_START.and(oneOrMore(ANY_CHAR))
-        .and(OPEN_BRACKET)
-        .and(
-                riot("19").and(
-                        chars('0').through('8')
-                ).and(DIGIT).or(
+ritex = LINE_START.then(oneOrMore(ANY_CHAR))
+        .then(OPEN_BRACE)
+        .then(
+                riot("19").then(
+                        inSetOf("").andChars('0').through('8')
+                ).then(DIGIT).or(
                         DIGIT.times(3)
                 ).or(
                         DIGIT.times(2)
@@ -331,24 +291,24 @@ ritex = LINE_START.and(oneOrMore(ANY_CHAR))
                         DIGIT
                 ).wholeThingGrouped()
         )
-        .and(CLOSE_BRACKET);
+        .then(CLOSE_BRACE);
 ```
 
 Below is an example of how RegexRiot would generate a regex expression to match the 12 and 24 bit colors whose red/green/blue components are equal to each other as per the regextutorials website [regextutorials.com](http://regextutorials.com/excercise.html?Grayscale%20colors).
 
 ```java
-        answer = "#((\\d|[A-F]|[a-f]){1,2})\\1{2}";
-        ritex = riot("#")
-                .and(
-                        DIGIT.or(
-                                chars('A').through('F').toRiotString()
-                        ).or(
-                                chars('a').through('f').toRiotString()
-                        )
-                ).times(1, 2)
-                .grouped()
-                .and(group(1))
-                .times(2);
+answer = "#((?:\\d|[A-F]|[a-f]){1,2})\\1{2}"; // What RegexRiot would generate
+ritex = riot("#")
+        .then(
+            DIGIT.or(
+                    inSetOf("").andChars('A').through('F')
+            ).or(
+                    inSetOf("").andChars('a').through('f')
+            )
+        ).times(1, 2)
+        .grouped()
+        .then(group(1))
+        .times(2);
 ```
 
 ## Future Work and Concluding Statements
