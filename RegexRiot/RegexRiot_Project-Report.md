@@ -186,40 +186,40 @@ ritex = riot("Bugs")
 But we are not finished yet, so we do not immediately use the `;` character. We want to include the `" Bunny"` portion of the string, so we shall append `.and(String extension)` like so:
 
 ```java
-ritex = riot("Bugs").and(" Bunny")
+ritex = riot("Bugs").then(" Bunny")
 ```
 
 To assign an alias to `Bugs Bunny`, we shall use `.as(String name)` to mark it with the tag `name01` like so:
 
 ```java
-ritex = riot("Bugs").and(" Bunny").as("name01")
+ritex = riot("Bugs").then(" Bunny").as("name01")
 ```
 
 Now that we have made the first name, we must make use of the `.or(RiotString extension)` to begin making the `DaffyDaffy` portion of the regex, like so:
 
 ```java
-ritex = riot("Bugs").and(" Bunny").as("name01")
+ritex = riot("Bugs").then(" Bunny").as("name01")
     .or(riot("Daffy"))
 ```
 
 Note that a new `riot()` expression was enclosed, which allows a similar technique to be used as was the case with `Bugs Bunny`. The main difference in creating this sub-instance of a RiotString is that we must use the `.times(int repeatCount)` method to defined that `Daffy` will occur twice, like so:
 
 ```java
-ritex = riot("Bugs").and(" Bunny").as("name01")
+ritex = riot("Bugs").then(" Bunny").as("name01")
     .or(riot("Daffy").times(2))
 ```
 
 We will finish this regex by assigning the name `name02` to the regex associated with `DaffyDaffy`.
 
 ```java
-ritex = riot("Bugs").and(" Bunny").as("name01")
+ritex = riot("Bugs").then(" Bunny").as("name01")
     .or(riot("Daffy").times(2).as("name02"));
 ```
 
 The final expression will appear as shown above, but playing around with the formatting of the expression as shown below can allow for comments to surround enclosing blocks of `.or()` or `.and()` to allow for greater clarification when building more complicated regex.
 
 ```java
-ritex = riot("Bugs").and(" Bunny").as("name01")
+ritex = riot("Bugs").then(" Bunny").as("name01")
     .or(
         riot("Daffy").times(2).as("name02")
     );
@@ -267,7 +267,7 @@ Below is an example of how RegexRiot would generate a regex expression to match 
 
 ```java
         answer = "\\d+\\.\\d+"; // What RegexRiot would generate
-        ritex = oneOrMore(DIGIT).and(DOT).and(oneOrMore(DIGIT));
+        ritex = oneOrMore(DIGIT).then(DOT).then(oneOrMore(DIGIT));
 ```
 
 Below is an example of how RegexRiot would generate a regex expression to match the titles of all films produced before 1990 as per the regextutorials website [regextutorials.com](http://regextutorials.com/excercise.html?Years%20before%201990).
@@ -275,19 +275,19 @@ Below is an example of how RegexRiot would generate a regex expression to match 
 ```java
 answer = "^.+\\((19[0-8]\\d|\\d{3}|\\d{2}|\\d)\\)"; // What RegexRiot would generate
 ritex = LINE_START.then(oneOrMore(ANY_CHAR))
-        .then(OPEN_BRACE)
-        .then(
-                riot("19").then(
-                        inSetOf("").andChars('0').through('8')
-                ).then(DIGIT).or(
-                        DIGIT.times(3)
-                ).or(
-                        DIGIT.times(2)
-                ).or(
-                        DIGIT
-                ).wholeThingGrouped()
-        )
-        .then(CLOSE_BRACE);
+    .then(OPEN_BRACE)
+    .then(
+        riot("19").then(
+                inSetOf("").andChars('0').through('8')
+        ).then(DIGIT).or(
+                DIGIT.times(3)
+        ).or(
+                DIGIT.times(2)
+        ).or(
+                DIGIT
+        ).wholeThingGrouped()
+    )
+    .then(CLOSE_BRACE);
 ```
 
 Below is an example of how RegexRiot would generate a regex expression to match the 12 and 24 bit colors whose red/green/blue components are equal to each other as per the regextutorials website [regextutorials.com](http://regextutorials.com/excercise.html?Grayscale%20colors).
@@ -296,11 +296,11 @@ Below is an example of how RegexRiot would generate a regex expression to match 
 answer = "#((?:\\d|[A-F]|[a-f]){1,2})\\1{2}"; // What RegexRiot would generate
 ritex = riot("#")
         .then(
-            DIGIT.or(
-                    inSetOf("").andChars('A').through('F')
-            ).or(
-                    inSetOf("").andChars('a').through('f')
-            )
+                DIGIT.or(
+                        inSetOf("").andChars('A').through('F')
+                ).or(
+                        inSetOf("").andChars('a').through('f')
+                )
         ).times(1, 2)
         .grouped()
         .then(group(1))
