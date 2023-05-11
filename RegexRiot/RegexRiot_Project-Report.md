@@ -102,10 +102,6 @@ public interface RiotTokens {
 A similar approach was used in definition of frequency of a certain group, where the number of expected instances was simplified from using symbols, to lexical modifier names. This is shown in the interface below:
 
 ```java
-/**
- * An interface to determine different amounts of instances that a certain
- * sub-expression can have within an overall regex instance.
- */
 public class RiotQuantifiers {
     public static RiotString oneOrNone(RiotString ritex) {
         return ritex.wholeThingOptional();
@@ -241,20 +237,20 @@ ritex = riot("#")
 From there, we need to make use of `.and(RiotString extension)`, `.or(RiotString extension)`, as well as the `.times(int repeatCount)` or `.times(int atLeast, int atMost)`. The resulting expression will result in the following expression:
 
 ```java
-ritex = riot("#").and(
-        DIGIT.or(chars('A').through('F').toRiotString())
-        .or(chars('a').through('f').toRiotString())
+ritex = riot("#").then(
+        DIGIT.or(.inSetOf("").andChars('A').through('F'))
+        .or(inSetOf("").andChars('a').through('f'))
     ).times(1, 2)
 ```
 
 In the above code, `DIGIT` is a previously defined token as explained in the **Implemenation** section of the report, and `chars(char inclusiveStartChar).through(char inclusiveEndChar)` is a utility range method that was also previously defined. However, this does not immediately account for the fact that following the hexadecimal declaration denoted by `#`, there can be either three characters or six characters, so we can define the previous code block as a group, and have it possibly repeat twice like so:
 
 ```java
-ritex = riot("#").and(
-        DIGIT.or(chars('A').through('F').toRiotString())
-        .or(chars('a').through('f').toRiotString())
-    ).times(1, 2).grouped().and(group(1)).times(2);
-resultingRegex = "#((\\d|[A-F]|[a-f]){1,2})\\1{2}";
+ritex = riot("#").then(
+        DIGIT.or(.inSetOf("").andChars('A').through('F'))
+        .or(inSetOf("").andChars('a').through('f'))
+    ).times(1, 2).grouped().then(group(1)).times(2);
+resultingRegex = "#((?:\\d|[A-F]|[a-f]){1,2})\\1{2}";
 ```
 
 This provides a basic outline for the functionality of RegexRiot as it had been designed. What's left is to discuss the types of testing that had been done, and make a few comments on the current state of the library as it is initially distributed nearing the end of May 2023.
