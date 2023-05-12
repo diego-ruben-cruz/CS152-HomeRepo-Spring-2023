@@ -1,6 +1,4 @@
 \documentclass[conference]{IEEEtran}
-% \IEEEoverridecommandlockouts
-% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
@@ -38,12 +36,19 @@
   morestring=[b]',
   morestring=[b]"
 }
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  columns=fullflexible,
+  showstringspaces=false,
+  commentstyle=\color{gray}\upshape
+}
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{RegexRiot \\A Java Library for Building Regular Expressions}\\
+\title{RegexRiot \\A Java Library for Building Regular Expressions}
 
 \author{\IEEEauthorblockN{Diego Cruz}
     \IEEEauthorblockA{\textit{Dept. of Computer Science} \\
@@ -96,7 +101,7 @@ One solution to make regex building and management easier includes the \texttt{m
 which simplifies regex into separate blocks that can break down the expression into separate
 groups, which one can define as subgroups.\cite{magic-regexp}
 \texttt{magic-regexp} was made as an alternative to the native JavaScript object \texttt{RegExp}.
-\textbf{Figure 1} is an example which demonstrates how a regex for a phone number can be made with
+Figure~\ref{fig:magic-regexp-phonenum-regex} is an example which demonstrates how a regex for a phone number can be made with
 \texttt{magic-regexp}. \cite{omereshone2023}
 
 \vfill\eject
@@ -105,21 +110,19 @@ groups, which one can define as subgroups.\cite{magic-regexp}
     \centering
     \label{fig:magic-regexp-phonenum-regex}
     \begin{lstlisting}[language=JavaScript]
-    const NEW_PHONE_RE = createRegExp(
-        exactly("+")
+const NEW_PHONE_RE = createRegExp(
+    exactly("+")
         .optionally()
         .and("1")
         .as("country")
         .optionally()
         .and(charIn(" -").optionally())
-        .and(charIn("123456789")
-        .and(digit.times(3)).as("area"))
-        .and(charIn("123456789")
-        .and(digit.times(6)).as("rest"))
+        .and(charIn("123456789").and(digit.times(3)).as("area"))
+        .and(charIn("123456789").and(digit.times(6)).as("rest"))
         .at.lineEnd()
         .at.lineStart()
-            );
-        \end{lstlisting}
+    );
+    \end{lstlisting}
     \caption{\texttt{magic-regexp} Phone Number Regex}
 \end{figure}
 
@@ -141,9 +144,9 @@ designing the library were specified as follows:
           to read and will provide a clear description of the pattern to match.
 
     \item \textbf{Support for Java and Kotlin:}\\
-          The library will be developed for Java and Kotlin developers. \cite{oracledocs93}
+          The library will be developed for Java and Kotlin developers. \cite{oracle_docs1997}
           This will provide a solution for developers working with these languages who are
-          looking for an easy-to-use regular expression library.\cite{kotlindocs23}
+          looking for an easy-to-use regular expression library.\cite{kotlin_docs2023}
 
           \vfill\eject
 
@@ -175,7 +178,7 @@ understand individual blocks of the regex expression, where the programmer would
 need to comment on subgroups and the whole overall group to clarify what 'chunks' accomplish
 what tasks in parsing.
 
-In the following example code, RiotTokens is an interface that outlines the tokens that can
+As shown in Figure~\ref{fig:regexriot-riot-tokens}, RiotTokens is an interface that outlines the tokens that can
 be used in conjunction with the RiotString.
 
 \begin{figure}[htbp]
@@ -184,57 +187,43 @@ be used in conjunction with the RiotString.
     \begin{lstlisting}[language=Java]
 public interface RiotTokens {
     /**
-    * This should be safe to use as 
-    * argument to RiotSet.chars()
+    * This should be safe to use as argument to use as Argument to RiotSet.chars()
     */
-    RiotString DIGIT = 
-        newLazyRiot("\\d", true),
-        DOT = newLazyRiot("\\.", true),
-        WORD_CHAR = newLazyRiot(
-            "\\w", true),
-        OPEN_BRACE = newLazyRiot(
-            "\\(", true),
-        CLOSE_BRACE = newLazyRiot(
-            "\\)", true),
-        OPEN_SQ_BRACE = newLazyRiot(
-            "\\[", true),
-        CLOSE_SQ_BRACE = newLazyRiot(
-            "\\]", true),
-        QUESTION_MARK = newLazyRiot(
-            "\\?", true),
-        BOUNDARY = newLazyRiot(
-            "\\b", true),
-        SPACE = newLazyRiot("\\s", true),
-        SPACES = oneOrMore(SPACE),
-        PLUS = newLazyRiot("\\+", true);
+    RiotString DIGIT = newLazyRiot("\\d", true),
+                    DOT = newLazyRiot("\\.", true),
+                    WORD_CHAR = newLazyRiot("\\w", true),
+                    OPEN_BRACE = newLazyRiot("\\(", true),
+                    CLOSE_BRACE = newLazyRiot("\\)", true),
+                    OPEN_SQ_BRACE = newLazyRiot("\\[", true),
+                    CLOSE_SQ_BRACE = newLazyRiot("\\]", true),
+                    QUESTION_MARK = newLazyRiot("\\?", true),
+                    BOUNDARY = newLazyRiot("\\b", true),
+                    SPACE = newLazyRiot("\\s", true),
+                    SPACES = oneOrMore(SPACE),
+                    PLUS = newLazyRiot("\\+", true);
     /**
-    * This is not safe to use
-    * as arguments to RiotSet.chars()
+    * This is not safe to use as arguments to RiotSet.chars()
     */
-    RiotString ANY_CHAR = 
-        newLazyRiot("."),
-        LINE_START = newLazyRiot(
-            "^", true),
-        Line_END = newLazyRiot("$", true);
-
+    RiotString ANY_CHAR = newLazyRiot("."),
+                    LINE_START = newLazyRiot("^", true),
+                    Line_END = newLazyRiot("$", true);
     RiotSet HEX = inSetOf(DIGIT)
-        .andChars('a').through('f')
-        .andChars('A').through('F'),
-        HEX_LOWER = inSetOf(DIGIT)
-            .andChars('a').through('f'),
-        HEX_UPPER = inSetOf(DIGIT)
-            .andChars('A').through('F');
+                    .andChars('a').through('f')
+                    .andChars('A').through('F'),
+                    HEX_LOWER = inSetOf(DIGIT)
+                                    .andChars('a').through('f'),
+                    HEX_UPPER = inSetOf(DIGIT)
+                                    .andChars('A').through('F');
     int UNLIMITED = -1;
+
 }
-    \end{lstlisting}
+            \end{lstlisting}
     \caption{\texttt{RegexRiot} RiotTokens Class}
 \end{figure}
 
-\vfill\eject
-
 A similar approach was used in definining the frequency of a certain group,
 where the number of expected instances was simplified from using symbols,
-to lexical modifier names. This is shown in \textbf{Figure~ \ref{fig:regexriot-quantifiers}}
+to lexical modifier names. This is shown in Figure~\ref{fig:regexriot-quantifiers}
 (note that this is an incomplete class, for the sake of saving space
 on the paper).
 
@@ -260,16 +249,16 @@ public class RiotQuantifiers {
         ritex.wholeOnceOrMoreTimes();
     }
 }
-           \end{lstlisting}
+    \end{lstlisting}
     \caption{\texttt{RegexRiot} Incomplete RiotQuantifiers Class}
 \end{figure}
 
-For the sake of simplicity, the above code block shows one approach to how
+For the sake of simplicity, Figure~\ref{fig:regexriot-quantifiers} shows one approach to how
 RegexRiot can build expressions, but it is also possible for RiotStrings
 to take Strings as input, that may have been previously built by other
 RiotStrings, and build upon them to create a larger regex expression.
 When defining ranges, RegexRiot has a native way of handling those by way
-of defining them as overall 'sets' as shown in \textbf{Figure \ref{fig:regexriot-riotset}}.
+of defining them as overall 'sets' as shown in Figure~\ref{fig:regexriot-riotset}.
 
 \begin{figure}[htbp]
     \centering
@@ -306,7 +295,7 @@ extends RiotString.RiotStringable {
         .then(expression);
     }
 }
-                   \end{lstlisting}
+    \end{lstlisting}
     \caption{\texttt{RegexRiot} RiotSet Class}
 \end{figure}
 
@@ -317,20 +306,196 @@ Further details on how to use the library will be outlined in
 the \textbf{Usage} section of the report.
 
 \subsection{Usage}
-Define abbreviations and acronyms the first time they are used in the text,
-even after they have been defined in the abstract. Abbreviations such as
-IEEE, SI, MKS, CGS, ac, dc, and rms do not have to be defined. Do not use
-abbreviations in the title or heads unless they are unavoidable.
+RegexRiot is a library that is designed to be able to branch out regex into
+subgroups and be able to mark them with a certain alias such that they can
+be identified upon first reading through the code. Then, additional
+comments made can clarify upon larger subgroups as to how they
+contribute to the larger overall master expression.
 
+Let us walk through an example of parsing an input for one name,
+or another name in the context of a riotString.
+Suppose we were searching to match either `Bugs Bunny`
+or `DaffyDaffy` in the input. The first thing we would do is
+create a RiotString through calling \texttt{riot(String seed)} as shown below:
+
+\begin{lstlisting}[language=Java]
+ritex = riot("Bugs")
+\end{lstlisting}
+
+But we are not finished yet, so we do not immediately use the \texttt{;}
+character. We want to include the \texttt{" Bunny"} portion of the string,
+so we shall append \\
+\texttt{.then(String extension)} like so:
+
+\begin{lstlisting}[language=Java]
+ritex = riot("Bugs").then(" Bunny")
+\end{lstlisting}
+
+To assign an alias to \\
+\texttt{Bugs Bunny}, we shall use \texttt{.as(String name)}
+to mark it with the tag \texttt{name01} like so:
+
+\begin{lstlisting}[language=Java]
+ritex = riot("Bugs")
+    .then(" Bunny").as("name01")
+\end{lstlisting}
+
+Now that we have made the first name, we must make use of the
+\texttt{.or(RiotString extension)} to begin making the \texttt{DaffyDaffy}
+portion of the regex, like so:
+
+\begin{lstlisting}[language=Java]
+ritex = riot("Bugs")
+    .then(" Bunny").as("name01")
+    .or(riot("Daffy"))
+\end{lstlisting}
+
+Note that a new \texttt{riot()} expression was enclosed, which allows a similar
+technique to be used as was the case with \texttt{Bugs Bunny}. The main
+difference in creating this sub-instance of a RiotString is that we must
+use the \texttt{.times(int repeatCount)}6 method to define that \texttt{Daffy} will
+occur twice, like so:
+
+\begin{lstlisting}[language=Java]
+ritex = riot("Bugs")
+    .then(" Bunny").as("name01")
+    .or(riot("Daffy").times(2))
+\end{lstlisting}
+
+We will finish this regex by assigning the name \texttt{name02}
+to the regex associated with \texttt{DaffyDaffy}.
+
+\begin{lstlisting}[language=Java]
+ritex = riot("Bugs")
+    .then(" Bunny").as("name01")
+    .or(riot("Daffy").times(2)
+        .as("name02"));
+\end{lstlisting}
+
+The final expression will appear as shown above, but playing around with
+the formatting of the expression as shown below can allow for comments
+to surround enclosing blocks of \texttt{.or()} or \texttt{.and()} to allow for
+greater clarification when building more complicated regex.
+
+\begin{lstlisting}[language=Java]
+answer = "(?<name01>Bugs Bunny)|(?<name02>(Daffy){2})"; // What RegexRiot would generate
+ritex = riot("Bugs").
+    then(" Bunny").as("name01")
+    .or(riot("Daffy").times(2)
+        .as("name02")
+    );
+\end{lstlisting}
+
+Let us make a more complicated expression where it should match 24-bit
+hexadecimal grayscale colors such as \texttt{\#000000}, \texttt{\#a9a9a9},
+\texttt{\#848484} as well as 12-bit hexadecimal grayscale colors such as
+\texttt{\#FFF} and \texttt{\#000}.
+
+Making the base, we should have the symbol \texttt{\#} appear on ALL instances
+of the color, like so:
+
+\begin{lstlisting}[language=Java]
+ritex = riot("#")
+\end{lstlisting}
+
+% \vbreak\eject
+
+From there, we need to make use of \texttt{.and(RiotString extension)},
+\texttt{.or(RiotString extension)}, as well as the
+\texttt{.times(int repeatCount)} or \texttt{.times(int atLeast, int atMost)}.
+The resulting expression will result in the following expression:
+
+\begin{lstlisting}[language=Java]
+ritex = riot("#").then(
+    DIGIT.or(.inSetOf("").andChars('A').through('F'))
+    .or(inSetOf("").andChars('a').through('f'))
+).times(1, 2)
+\end{lstlisting}
+
+In the above code, \texttt{DIGIT} is a token defined earlier, as explained in
+Figure~\ref{fig:regexriot-riot-tokens} of the report, and
+\texttt{chars(char inclusiveStartChar).through(char inclusiveEndChar)} is a utility
+range method that was also previously defined. However, this does not immediately
+account for the fact that following the hexadecimal declaration denoted by
+\texttt{\#}, there can be either three characters or six characters, so we can define
+the previous code block as a group, and have it possibly repeat twice like so:
+
+\begin{lstlisting}[language=Java]
+ritex = riot("#").then(
+    DIGIT.or(.inSetOf("").andChars('A').through('F'))
+    .or(inSetOf("").andChars('a').through('f'))
+).times(1, 2).grouped().then(group(1)).times(2);
+resultingRegex = "#((?:\\d|[A-F]|[a-f]){1,2})\\1{2}";
+\end{lstlisting}
+
+This provides a basic outline for the functionality of RegexRiot as
+it had been designed. What's left is to discuss the types of testing that
+had been done, and make a few comments on the current state of the library
+as it is initially distributed nearing the end of May 2023.
 
 \subsection{Testing}
 
-The preferred spelling of the word ``acknowledgment'' in America is without
-an ``e'' after the ``g''. Avoid the stilted expression ``one of us (R. B.
-G.) thanks $\ldots$''. Instead, try ``R. B. G. thanks$\ldots$''. Put sponsor
-acknowledgments in the unnumbered footnote on the first page.
+Testing was largely conducted with the help of a website known as
+\textbf{regextutorials}, which contain both tutorials and
+practice exercises on how to make JavaScript Regex, which helps to
+understand some of the decisions made for the magic-regexp library
+during its implementation. \cite{regextutorials}
 
-\vfill\eject
+In the following examples, modifications would have to be made such
+that the double backslash \texttt{\textbackslash\textbackslash} would be reduced to a single backslash
+\texttt{\textbackslash} to be an acceptable regex expression in JavaScript when verifying the
+output on \textbf{regextutorials}. \cite{regextutorials}
+
+Below is an example of how RegexRiot would generate a regex expression
+to match numbers that contain a floating point as per
+\textbf{regextutorials}. \cite{regextutorials}
+
+\begin{lstlisting}[language=Java]
+answer = "\\d+\\.\\d+"; // What RegexRiot would generate
+ritex = oneOrMore(DIGIT).then(DOT).then(oneOrMore(DIGIT));
+\end{lstlisting}
+
+Below is an example of how RegexRiot would generate a regex expression
+to match the titles of all films produced before 1990 as per the
+\textbf{regextutorials} website.\cite{regextutorials}
+
+\begin{lstlisting}[language=Java]
+answer = "^.+\\((19[0-8]\\d|\\d{3}|\\d{2}|\\d)\\)"; // What RegexRiot would generate
+ritex = LINE_START.then(oneOrMore(ANY_CHAR))
+    .then(OPEN_BRACE)
+    .then(
+        riot("19").then(
+                inSetOf("").andChars('0').through('8')
+        ).then(DIGIT).or(
+                DIGIT.times(3)
+        ).or(
+                DIGIT.times(2)
+        ).or(
+                DIGIT
+        ).wholeThingGrouped()
+    )
+    .then(CLOSE_BRACE);
+    \end{lstlisting}
+
+Below is an example of how RegexRiot would generate a regex expression to
+match the 12 and 24 bit colors whose red/green/blue components are equal to
+each other as per the \textbf{regextutorials} website.\cite{regextutorials}
+
+\begin{lstlisting}[language=Java]
+answer = "#((?:\\d|[A-F]|[a-f]){1,2})\\1{2}"; // What RegexRiot would generate
+ritex = riot("#")
+        .then(
+                DIGIT.or(
+                        inSetOf("").andChars('A').through('F')
+                ).or(
+                        inSetOf("").andChars('a').through('f')
+                )
+        ).times(1, 2)
+        .grouped()
+        .then(group(1))
+        .times(2);
+\end{lstlisting}
+
 
 \section{Future Work and Concluding Statements}
 
@@ -338,11 +503,11 @@ RegexRiot has been released as a `.jar` package that is immediately available
 on GitHub along with the entirety of the source code which prospective users
 can download and build on their local machines. It is clear that this library
 remains in infancy, because testing was modeled on a small sample size from
-\url{https://www.regextutorials.com} where the intention was to
+\textbf{regextutorials} where the intention was to
 teach regex well enough to know the basics, but not enough to be able to
 comprehensively teach users how to cover particular edge cases.
 In a few of the exercises, the regex generated by us may contain test escapes
-that were not accounted for by \url{https://www.regextutorials.com}.
+that were not accounted for by \textbf{regextutorials}.\cite{regextutorials}
 
 Future releases may be present in the form of a public Maven repository,
 or an entirely different approach can be used and perhaps a package manager
@@ -355,10 +520,11 @@ the software is present in the form of javadoc, but perhaps there is an
 opportunity to make a presentable documentation in a \texttt{readme.md}
 right from the repository page in GitHub.
 
-GitHub link to repository: \url{https://github.com/RK22000/RegexRiot}
+GitHub link to repository:\\
+\url{https://github.com/RK22000/RegexRiot}
 
 \bibliographystyle{IEEEtran}
-\bibliography{RegexRiot-Refs.bib}
+\bibliography{RegexRiot}
 
 \onecolumn
 % start of the appendix section, with one column

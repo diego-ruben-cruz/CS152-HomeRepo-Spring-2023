@@ -175,7 +175,7 @@ Those are the core components of the inner workings of RegexRiot, with additiona
 
 _Provide instructions on how to use your utility library. This could include code examples and explanations of the library's API._
 
-RegexRiot is a library that is designed to be able to branch out regex into subgroups and be able to mark them with a certain alias such that they can be identified upon first reading through the code. Then, additional comments made can clarify upon larger subgroups as to how they contribute to
+RegexRiot is a library that is designed to be able to branch out regex into subgroups and be able to mark them with a certain alias such that they can be identified upon first reading through the code. Then, additional comments made can clarify upon larger subgroups as to how they contribute to the larger overall master expression.
 
 Let's walk through an example of parsing an input for one name, or another name in the context of a riotString. Suppose we were searching to match either `Bugs Bunny` or `DaffyDaffy` in the input. The first thing we would do is create a RiotString through calling `riot(String seed)` as shown below:
 
@@ -202,7 +202,7 @@ ritex = riot("Bugs").then(" Bunny").as("name01")
     .or(riot("Daffy"))
 ```
 
-Note that a new `riot()` expression was enclosed, which allows a similar technique to be used as was the case with `Bugs Bunny`. The main difference in creating this sub-instance of a RiotString is that we must use the `.times(int repeatCount)` method to defined that `Daffy` will occur twice, like so:
+Note that a new `riot()` expression was enclosed, which allows a similar technique to be used as was the case with `Bugs Bunny`. The main difference in creating this sub-instance of a RiotString is that we must use the `.times(int repeatCount)` method to define that `Daffy` will occur twice, like so:
 
 ```java
 ritex = riot("Bugs").then(" Bunny").as("name01")
