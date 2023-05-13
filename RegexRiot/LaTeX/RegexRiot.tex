@@ -84,7 +84,7 @@
 \end{abstract}
 
 \begin{IEEEkeywords}
-    Regular Expressions, Java, , JavaScript, Kotlin, Library, Pattern Matching, Parsing
+    Regular Expressions, Java, JavaScript, Kotlin, Library, Pattern Matching, Parsing
 \end{IEEEkeywords}
 
 \section{Introduction}
@@ -157,7 +157,7 @@ designing the library were specified as follows:
 \end{enumerate}
 
 With those aforementioned features taken into account,
-some UML diagrams have been provided in the \textbf{Appendices} of the
+some UML diagrams have been provided in the \textbf{Appendices} of this
 document.
 
 RegexRiot is heavily inspired by the \texttt{magix-regexp} library, and as such,
@@ -167,7 +167,9 @@ to build individual components of the expression, which can then be used to cons
 overall group that is a larger chunk of the master expression. With respect to the
 declarative paradigm, RegexRiot follows in the steps of \texttt{magic-regexp}
 in that it provides a simpler and more readable syntax for the creation and
-maintenance of regex.
+maintenance of regex. It should be no surprise that RegexRiot is primarily a functional programming
+library, as it it built upon treating functions as first-class variables, and they can be provided as inputs
+for functions which can be ultimately stored as primitive data structures.
 
 \section{Implementation}
 The implementation of RegexRiot heavily depends on the usage of tokens to denote specific
@@ -398,8 +400,6 @@ of the color, like so:
 ritex = riot("#")
 \end{lstlisting}
 
-% \vbreak\eject
-
 From there, we need to make use of \texttt{.and(RiotString extension)},
 \texttt{.or(RiotString extension)}, as well as the
 \texttt{.times(int repeatCount)} or \texttt{.times(int atLeast, int atMost)}.
@@ -455,7 +455,7 @@ answer = "\\d+\\.\\d+"; // What RegexRiot would generate
 ritex = oneOrMore(DIGIT).then(DOT).then(oneOrMore(DIGIT));
 \end{lstlisting}
 
-Below is an example of how RegexRiot would generate a regex expression
+The following is an example of how RegexRiot would generate a regex expression
 to match the titles of all films produced before 1990 as per the
 \textbf{regextutorials} website.\cite{regextutorials}
 
@@ -496,7 +496,6 @@ ritex = riot("#")
         .times(2);
 \end{lstlisting}
 
-
 \section{Future Work and Concluding Statements}
 
 RegexRiot has been released as a `.jar` package that is immediately available
@@ -518,7 +517,8 @@ RegexRiot is an open-source software, and as such, we invite others to use the l
 in their programming, and contribute to improve upon it. The documentation for
 the software is present in the form of javadoc, but perhaps there is an
 opportunity to make a presentable documentation in a \texttt{readme.md}
-right from the repository page in GitHub.
+right from the repository page in GitHub. The \textbf{GitHub Issues} page will provide
+an excellent platform for bugfixes and external contributions to the library.
 
 GitHub link to repository:\\
 \url{https://github.com/RK22000/RegexRiot}
